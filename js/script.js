@@ -1,18 +1,26 @@
 console.log("script.js loaded");
 
-// Get API key from .env via Vite
+
 const API_KEY = import.meta.env.VITE_GIPHY_API_KEY;
 
-console.log("API_KEY:", API_KEY);
+const button = document.querySelector("#fetch-gif-btn");
+const gifContainer = document.querySelector("#gif-container");
 
-const endpoint = `https://api.giphy.com/v1/gifs/search?api_key=${API_KEY}&q=dogs&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips`;
+button.addEventListener("click", async () => {
+  const endpoint = `https://api.giphy.com/v1/gifs/search?api_key=${API_KEY}&q=dogs&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips`;
 
-fetch(endpoint)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
+  try {
+    const res = await fetch(endpoint);
+    const data = await res.json();
     const images = data.data.map(gif => gif.images.original.url);
-    console.log(images);
-  })
-  .catch(err => console.error("Error:", err));
-  
+
+    gifContainer.innerHTML = "";
+
+    images.forEach(url => {
+      gifContainer.innerHTML += `<img src="${url}" class="col-3 mb-3">`;
+    });
+
+  } catch (err) {
+    console.error("Error:", err);
+  }
+});
